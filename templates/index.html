@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        label, input {
+            display: block;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>K-Means Clustering Predictor</h1>
+        <form id="predict-form">
+            <label for="study_hours">Study Hours:</label>
+            <input type="number" id="study_hours" name="study_hours" step="0.1" required>
+
+            <label for="attendance">Attendance:</label>
+            <input type="number" id="attendance" name="attendance" step="0.1" required>
+
+            <button type="submit">Predict Cluster</button>
+        </form>
+
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('predict-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const studyHours = document.getElementById('study_hours').value;
+            const attendance = document.getElementById('attendance').value;
+
+            // Send data as JSON
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    study_hours: studyHours,
+                    attendance: attendance
+                }),
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById('result');
+
+            if (data.error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `<p style="color: green;">Predicted Cluster: ${data.cluster}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
